@@ -7,6 +7,7 @@ from image_captioning.entity.config_entity import (
     ModelTrainerConfig,
     DataValidationConfig,
     CaptionParserConfig,
+    CaptionCleanerConfig,
 )
 
 from image_captioning.utils.common import (
@@ -81,3 +82,15 @@ class ConfigurationManager:
         )
 
         return caption_parser_config
+
+    def get_caption_cleaner_config(self) -> CaptionCleanerConfig:
+
+        config = self.config.caption_cleaner
+
+        create_directories([config.root_dir])
+
+        return CaptionCleanerConfig(
+            root_dir=Path(config.root_dir),
+            input_file=Path(config.input_file),
+            output_file=Path(config.output_file),
+        )

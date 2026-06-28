@@ -48,3 +48,9 @@ class CaptionParserConfig:
     captions_file: Path
 
     output_file: Path
+
+@dataclass(frozen=True)
+class CaptionCleanerConfig:
+    root_dir: Path
+    input_file: Path
+    output_file: Path

@@ -51,3 +51,10 @@ caption_parser:
   captions_file: artifacts/data_ingestion/extracted/Flickr8k.token.txt
 
   output_file: artifacts/caption_parser/captions.csv
+
+caption_cleaner:
+  root_dir: artifacts/caption_cleaner
+
+  input_file: artifacts/caption_parser/captions.csv
+
+  output_file: artifacts/caption_cleaner/cleaned_captions.csv
