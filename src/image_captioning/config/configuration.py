@@ -6,6 +6,7 @@ from image_captioning.entity.config_entity import (
     DataIngestionConfig,
     ModelTrainerConfig,
     DataValidationConfig,
+    CaptionParserConfig,
 )
 
 from image_captioning.utils.common import (
@@ -66,3 +67,17 @@ class ConfigurationManager:
         )
 
         return data_validation_config
+
+    def get_caption_parser_config(self) -> CaptionParserConfig:
+
+        config = self.config.caption_parser
+
+        create_directories([config.root_dir])
+
+        caption_parser_config = CaptionParserConfig(
+            root_dir=Path(config.root_dir),
+            captions_file=Path(config.captions_file),
+            output_file=Path(config.output_file),
+        )
+
+        return caption_parser_config

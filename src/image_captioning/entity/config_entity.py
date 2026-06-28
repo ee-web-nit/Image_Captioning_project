@@ -40,3 +40,11 @@ class DataValidationConfig:
     validation_split: Path
     test_split: Path
     status_file: Path
+
+@dataclass(frozen=True)
+class CaptionParserConfig:
+    root_dir: Path
+
+    captions_file: Path
+
+    output_file: Path
