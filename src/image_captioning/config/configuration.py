@@ -8,6 +8,7 @@ from image_captioning.entity.config_entity import (
     DataValidationConfig,
     CaptionParserConfig,
     CaptionCleanerConfig,
+    DatasetSplitterConfig,
 )
 
 from image_captioning.utils.common import (
@@ -93,4 +94,21 @@ class ConfigurationManager:
             root_dir=Path(config.root_dir),
             input_file=Path(config.input_file),
             output_file=Path(config.output_file),
+        )
+    
+    def get_dataset_splitter_config(self) -> DatasetSplitterConfig:
+
+        config = self.config.dataset_splitter
+
+        create_directories([config.root_dir])
+
+        return DatasetSplitterConfig(
+            root_dir=Path(config.root_dir),
+            captions_file=Path(config.captions_file),
+            train_images=Path(config.train_images),
+            validation_images=Path(config.validation_images),
+            test_images=Path(config.test_images),
+            train_output=Path(config.train_output),
+            validation_output=Path(config.validation_output),
+            test_output=Path(config.test_output),
         )

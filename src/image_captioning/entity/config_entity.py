@@ -54,3 +54,17 @@ class CaptionCleanerConfig:
     root_dir: Path
     input_file: Path
     output_file: Path
+
+@dataclass(frozen=True)
+class DatasetSplitterConfig:
+    root_dir: Path
+
+    captions_file: Path
+
+    train_images: Path
+    validation_images: Path
+    test_images: Path
+
+    train_output: Path
+    validation_output: Path
+    test_output: Path

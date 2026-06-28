@@ -58,3 +58,20 @@ caption_cleaner:
   input_file: artifacts/caption_parser/captions.csv
 
   output_file: artifacts/caption_cleaner/cleaned_captions.csv
+
+dataset_splitter:
+  root_dir: artifacts/dataset_splitter
+
+  captions_file: artifacts/caption_cleaner/cleaned_captions.csv
+
+  train_images: artifacts/data_ingestion/extracted/Flickr_8k.trainImages.txt
+
+  validation_images: artifacts/data_ingestion/extracted/Flickr_8k.devImages.txt
+
+  test_images: artifacts/data_ingestion/extracted/Flickr_8k.testImages.txt
+
+  train_output: artifacts/dataset_splitter/train.csv
+
+  validation_output: artifacts/dataset_splitter/validation.csv
+
+  test_output: artifacts/dataset_splitter/test.csv
