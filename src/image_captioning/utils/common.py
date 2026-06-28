@@ -23,3 +23,17 @@ def read_yaml(file_path: str) -> ConfigBox:
     except Exception as e:
 
         raise CustomException(e, sys)
+    
+from pathlib import Path
+
+
+def create_directories(path_to_directories: list):
+    """
+    Creates a list of directories if they do not exist.
+
+    Args:
+        path_to_directories (list): List of directory paths.
+    """
+
+    for path in path_to_directories:
+        Path(path).mkdir(parents=True, exist_ok=True)

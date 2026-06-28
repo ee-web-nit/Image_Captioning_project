@@ -216,3 +216,36 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Virtual Environment
+venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+*.log
+
+# Dataset
+artifacts/data_ingestion/raw/
+artifacts/data_ingestion/extracted/
+artifacts/data_ingestion/processed/
+
+# Trained Models
+artifacts/model_trainer/
+
+# Uploaded Images
+uploads/
+
+# Environment Variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db

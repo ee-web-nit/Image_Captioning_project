@@ -2,9 +2,26 @@ artifacts_root: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  dataset_dir: artifacts/data_ingestion/Flickr8k
-  images_dir: artifacts/data_ingestion/Flickr8k/Images
-  captions_file: artifacts/data_ingestion/Flickr8k/captions.txt
+
+  raw_dir: artifacts/data_ingestion/raw
+
+  extracted_dir: artifacts/data_ingestion/extracted
+
+  processed_dir: artifacts/data_ingestion/processed
+
+  image_zip: artifacts/data_ingestion/raw/Flickr8k_Dataset.zip
+
+  text_zip: artifacts/data_ingestion/raw/Flickr8k_text.zip
+
+  images_dir: artifacts/data_ingestion/extracted/Flickr8k_Dataset
+
+  captions_file: artifacts/data_ingestion/extracted/Flickr8k.token.txt
+
+  train_split: artifacts/data_ingestion/extracted/Flickr_8k.trainImages.txt
+
+  validation_split: artifacts/data_ingestion/extracted/Flickr_8k.devImages.txt
+
+  test_split: artifacts/data_ingestion/extracted/Flickr_8k.testImages.txt
 
 model_trainer:
   root_dir: artifacts/model_trainer
