@@ -1,0 +1,7 @@
+Images Directory : True
+Captions File    : True
+Train Split      : True
+Validation Split : True
+Test Split       : True
+
+Validation Status : SUCCESS

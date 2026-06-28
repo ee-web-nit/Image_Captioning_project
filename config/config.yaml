@@ -29,3 +29,18 @@ model_trainer:
 
 prediction:
   upload_dir: uploads
+
+data_validation:
+  root_dir: artifacts/data_validation
+
+  images_dir: artifacts/data_ingestion/extracted/Flicker8k_Dataset
+
+  captions_file: artifacts/data_ingestion/extracted/Flickr8k.token.txt
+
+  train_split: artifacts/data_ingestion/extracted/Flickr_8k.trainImages.txt
+
+  validation_split: artifacts/data_ingestion/extracted/Flickr_8k.devImages.txt
+
+  test_split: artifacts/data_ingestion/extracted/Flickr_8k.testImages.txt
+
+  status_file: artifacts/data_validation/status.txt

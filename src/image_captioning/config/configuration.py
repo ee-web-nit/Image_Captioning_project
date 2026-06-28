@@ -5,6 +5,7 @@ from image_captioning.utils.common import read_yaml
 from image_captioning.entity.config_entity import (
     DataIngestionConfig,
     ModelTrainerConfig,
+    DataValidationConfig,
 )
 
 from image_captioning.utils.common import (
@@ -47,3 +48,21 @@ class ConfigurationManager:
         )
 
         return data_ingestion_config
+
+    def get_data_validation_config(self) -> DataValidationConfig:
+
+        config = self.config.data_validation
+
+        create_directories([config.root_dir])
+
+        data_validation_config = DataValidationConfig(
+            root_dir=Path(config.root_dir),
+            images_dir=Path(config.images_dir),
+            captions_file=Path(config.captions_file),
+            train_split=Path(config.train_split),
+            validation_split=Path(config.validation_split),
+            test_split=Path(config.test_split),
+            status_file=Path(config.status_file),
+        )
+
+        return data_validation_config

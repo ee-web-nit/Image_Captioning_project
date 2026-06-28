@@ -41,12 +41,15 @@ class DataIngestion:
 
             # ---------- Skip if already extracted ----------
 
-            if self.config.images_dir.exists():
+            if (
+                self.config.images_dir.exists()
+                and self.config.captions_file.exists()
+                and self.config.train_split.exists()
+                and self.config.validation_split.exists()
+                and self.config.test_split.exists()
+            ):
 
-                logger.info(
-                    "Dataset already extracted. Skipping extraction."
-                )
-
+                logger.info("Dataset already extracted. Skipping extraction.")
                 return
 
             # ---------- Create extraction directory ----------

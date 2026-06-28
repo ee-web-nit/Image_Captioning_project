@@ -30,3 +30,13 @@ class ModelTrainerConfig:
 
     root_dir: Path
     trained_model_path: Path
+    
+@dataclass(frozen=True)
+class DataValidationConfig:
+    root_dir: Path
+    images_dir: Path
+    captions_file: Path
+    train_split: Path
+    validation_split: Path
+    test_split: Path
+    status_file: Path
