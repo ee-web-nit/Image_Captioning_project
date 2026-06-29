@@ -31,6 +31,6 @@ batch_seq = tf.random.uniform(
 )
 
 # Run one training step
-history = model.train_step((batch_img, batch_seq))
+history = model.test_step((batch_img, batch_seq))
 
 print(history)

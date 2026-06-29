@@ -43,7 +43,7 @@ class TransformerDecoder(layers.Layer):
         self.dropout_2 = layers.Dropout(0.5)
         self.supports_masking = True
 
-    def call(self, inputs, encoder_outputs, training, mask=None):
+    def call(self, inputs, encoder_outputs, training=False, mask=None):
         inputs = self.embedding(inputs)
         causal_mask = self.get_causal_attention_mask(inputs)
 
@@ -65,7 +65,6 @@ class TransformerDecoder(layers.Layer):
             query=out_1,
             value=encoder_outputs,
             key=encoder_outputs,
-            attention_mask=padding_mask,
             training=training,
         )
         out_2 = self.layernorm_2(out_1 + attention_output_2)
