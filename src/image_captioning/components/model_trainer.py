@@ -151,11 +151,14 @@ class ModelTrainer:
 
                 tf.keras.callbacks.ModelCheckpoint(
 
-                    filepath=self.training_config.checkpoint_dir / "best_model.keras",
+                    filepath=self.training_config.checkpoint_dir /
+                    "best_model.weights.h5",
 
                     monitor="val_loss",
 
                     save_best_only=True,
+
+                    save_weights_only=True,
                 ),
 
                 tf.keras.callbacks.EarlyStopping(
@@ -225,10 +228,9 @@ class ModelTrainer:
     def save_model(self):
         try:
 
-            self.model.save(
-
+            self.model.save_weights(
                 self.training_config.model_dir /
-                "final_model.keras"
+                "final_model.weights.h5"
             )
             logger.info("Model saved successfully.")
         except Exception as e:
