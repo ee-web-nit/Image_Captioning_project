@@ -65,6 +65,7 @@ class TransformerDecoder(layers.Layer):
             query=out_1,
             value=encoder_outputs,
             key=encoder_outputs,
+            attention_mask=padding_mask,
             training=training,
         )
         out_2 = self.layernorm_2(out_1 + attention_output_2)
