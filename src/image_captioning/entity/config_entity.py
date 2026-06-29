@@ -68,3 +68,25 @@ class DatasetSplitterConfig:
     train_output: Path
     validation_output: Path
     test_output: Path
+
+@dataclass(frozen=True)
+class VocabularyBuilderConfig:
+    root_dir: Path
+
+    input_file: Path
+
+    vocabulary_file: Path
+
+    max_vocabulary_size: int
+
+@dataclass(frozen=True)
+class TokenizerBuilderConfig:
+    root_dir: Path
+
+    vocabulary_file: Path
+
+    tokenizer_path: Path
+
+    max_tokens: int
+
+    sequence_length: int

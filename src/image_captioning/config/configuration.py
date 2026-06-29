@@ -9,6 +9,8 @@ from image_captioning.entity.config_entity import (
     CaptionParserConfig,
     CaptionCleanerConfig,
     DatasetSplitterConfig,
+    VocabularyBuilderConfig,
+    TokenizerBuilderConfig,
 )
 
 from image_captioning.utils.common import (
@@ -111,4 +113,31 @@ class ConfigurationManager:
             train_output=Path(config.train_output),
             validation_output=Path(config.validation_output),
             test_output=Path(config.test_output),
+        )
+    
+    def get_vocabulary_builder_config(self):
+
+        config = self.config.vocabulary_builder
+
+        create_directories([config.root_dir])
+
+        return VocabularyBuilderConfig(
+            root_dir=Path(config.root_dir),
+            input_file=Path(config.input_file),
+            vocabulary_file=Path(config.vocabulary_file),
+            max_vocabulary_size=config.max_vocabulary_size,
+        )
+
+    def get_tokenizer_builder_config(self):
+
+        config = self.config.tokenizer_builder
+
+        create_directories([config.root_dir])
+
+        return TokenizerBuilderConfig(
+            root_dir=Path(config.root_dir),
+            vocabulary_file=Path(config.vocabulary_file),
+            tokenizer_path=Path(config.tokenizer_path),
+            max_tokens=config.max_tokens,
+            sequence_length=config.sequence_length,
         )

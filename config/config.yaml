@@ -75,3 +75,23 @@ dataset_splitter:
   validation_output: artifacts/dataset_splitter/validation.csv
 
   test_output: artifacts/dataset_splitter/test.csv
+
+vocabulary_builder:
+  root_dir: artifacts/vocabulary_builder
+
+  input_file: artifacts/dataset_splitter/train.csv
+
+  vocabulary_file: artifacts/vocabulary_builder/vocabulary.txt
+
+  max_vocabulary_size: 10000
+
+tokenizer_builder:
+  root_dir: artifacts/tokenizer_builder
+
+  vocabulary_file: artifacts/vocabulary_builder/vocabulary.txt
+
+  tokenizer_path: artifacts/tokenizer_builder/text_vectorizer.keras
+
+  max_tokens: 10000
+
+  sequence_length: 40
