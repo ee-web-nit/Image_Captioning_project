@@ -1,6 +1,5 @@
-from pathlib import Path
-import zipfile
 import sys
+import zipfile
 
 from image_captioning.logger import logger
 from image_captioning.exception import CustomException
@@ -15,6 +14,14 @@ class DataIngestion:
 
     def __init__(self, config: DataIngestionConfig):
         self.config = config
+
+    def _extract_zip(self, zip_path, output_dir):
+        """
+        Extract a ZIP file into the specified directory.
+        """
+
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(output_dir)
 
     def extract_dataset(self):
         """
@@ -43,47 +50,40 @@ class DataIngestion:
 
             if (
                 self.config.images_dir.exists()
+                and any(self.config.images_dir.iterdir())
                 and self.config.captions_file.exists()
-                and self.config.train_split.exists()
-                and self.config.validation_split.exists()
-                and self.config.test_split.exists()
             ):
 
-                logger.info("Dataset already extracted. Skipping extraction.")
+                logger.info(
+                    "Dataset already extracted. Skipping extraction."
+                )
+
                 return
 
             # ---------- Create extraction directory ----------
 
             self.config.extracted_dir.mkdir(
                 parents=True,
-                exist_ok=True
+                exist_ok=True,
             )
 
             # ---------- Extract Images ----------
 
             logger.info("Extracting image dataset...")
 
-            with zipfile.ZipFile(
+            self._extract_zip(
                 self.config.image_zip,
-                "r"
-            ) as zip_ref:
-
-                zip_ref.extractall(
-                    self.config.extracted_dir
-                )
+                self.config.extracted_dir,
+            )
 
             # ---------- Extract Text ----------
 
             logger.info("Extracting caption dataset...")
 
-            with zipfile.ZipFile(
+            self._extract_zip(
                 self.config.text_zip,
-                "r"
-            ) as zip_ref:
-
-                zip_ref.extractall(
-                    self.config.extracted_dir
-                )
+                self.config.extracted_dir,
+            )
 
             logger.info(
                 "Dataset extraction completed successfully."
