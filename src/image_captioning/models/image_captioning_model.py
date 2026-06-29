@@ -64,6 +64,7 @@ class ImageCaptioningModel(Model):
 
     def calculate_loss(self, y_true, y_pred, mask):
 
+        y_true = tf.cast(y_true, tf.int32)
         loss = self.loss_fn(
             y_true,
             y_pred,
@@ -83,11 +84,12 @@ class ImageCaptioningModel(Model):
             output_type=tf.int32,
         )
 
+        y_true = tf.cast(y_true, tf.int32)
+
         matches = tf.equal(
             y_true,
             predictions,
         )
-
         matches = tf.logical_and(
             mask,
             matches,
