@@ -105,3 +105,27 @@ model:
   sequence_length: 25
   batch_size: 64
   epochs: 30
+
+training:
+
+  mode: local          # local | cloud
+
+  local:
+    epochs: 1
+    batch_size: 16
+    shuffle_buffer: 1000
+
+  cloud:
+    epochs: 30
+    batch_size: 64
+    shuffle_buffer: 5000
+
+  learning_rate: 0.0001
+
+  checkpoint_dir: artifacts/checkpoints
+
+  model_dir: artifacts/model
+
+  tensorboard_dir: artifacts/tensorboard
+
+  history_dir: artifacts/history

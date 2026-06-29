@@ -1,44 +1,23 @@
+from image_captioning.components.model_trainer import ModelTrainer
 from image_captioning.config.configuration import ConfigurationManager
 
 
 class TrainingPipeline:
 
-    def __init__(self):
-
-        self.config_manager = ConfigurationManager()
-
     def run(self):
 
-        print("=" * 60)
-        print("IMAGE CAPTIONING TRAINING PIPELINE")
-        print("=" * 60)
+        config = ConfigurationManager()
 
-        self.load_configuration()
+        training_config = config.get_training_config()
 
-        print("Pipeline Initialized Successfully.")
+        trainer = ModelTrainer(training_config)
 
-    def load_configuration(self):
+        trainer.load_tokenizer()
+        trainer.load_dataset()
+        trainer.build_model()
+        trainer.compile_model()
+        trainer.create_callbacks()
+        trainer.train()
+        trainer.save_model()
 
-        print("Loading configurations...")
-
-        self.model_config = self.config_manager.get_model_config()
-
-        print("Configurations loaded successfully.")
-        
-    def load_tokenizer(self):
-        pass
-
-    def prepare_dataset(self):
-        pass
-
-    def build_model(self):
-        pass
-
-    def compile_model(self):
-        pass
-
-    def train_model(self):
-        pass
-
-    def save_model(self):
-        pass
+        print("Training pipeline completed.")
