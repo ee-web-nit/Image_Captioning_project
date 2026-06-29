@@ -1,64 +1,121 @@
-import tensorflow as tf
-import pandas as pd
 from pathlib import Path
 
-from image_captioning.utils.image_preprocessor import ImagePreprocessor
+import pandas as pd
+import tensorflow as tf
+
 from image_captioning.components.text_vectorizer import TextVectorizer
+from image_captioning.utils.image_preprocessor import ImagePreprocessor
+
 
 class DatasetBuilder:
+    """
+    Builds a tf.data.Dataset for the Image Captioning model.
+    """
 
-    def __init__(self, image_size=(299, 299)):
+    def __init__(
+        self,
+        batch_size=64,
+        sequence_length=25,
+        vocab_size=10000,
+    ):
+        self.batch_size = batch_size
 
         self.preprocessor = ImagePreprocessor()
 
-        self.vectorizer = TextVectorizer()
+        self.vectorizer = TextVectorizer(
+            max_tokens=vocab_size,
+            sequence_length=sequence_length,
+        )
 
-    def load_dataframe(self, caption_file):
+    def _load_dataframe(self, caption_file):
+        return pd.read_csv(caption_file)
 
-        df = pd.read_csv(caption_file)
-
-        return df
-    def adapt_vectorizer(self, dataframe):
+    def _prepare_lists(self, dataframe, image_dir):
+        image_paths = [
+            str(Path(image_dir) / image_name)
+            for image_name in dataframe["image_name"]
+        ]
 
         captions = dataframe["caption"].tolist()
 
-        self.vectorizer.adapt(captions)
-    def load_image(self, image_path):
+        return image_paths, captions
 
-        return self.preprocessor.preprocess(image_path)
-    def vectorize_caption(self, caption):
+    def _process(self, image_path, caption):
+        """
+        Python function executed through tf.py_function.
+        """
 
-        return self.vectorizer.vectorize([caption])[0]
-    def create_lists(self, dataframe, image_dir):
+        if isinstance(image_path, bytes):
+            image_path = image_path.decode("utf-8")
+        elif isinstance(image_path, tf.Tensor):
+            image_path = image_path.numpy().decode("utf-8")
 
-        images = []
+        if isinstance(caption, bytes):
+            caption = caption.decode("utf-8")
+        elif isinstance(caption, tf.Tensor):
+            caption = caption.numpy().decode("utf-8")
 
-        captions = []
+        image = self.preprocessor.preprocess(image_path)
 
-        for _, row in dataframe.iterrows():
+        caption = self.vectorizer.vectorize([caption])[0]
 
-            images.append(
+        return image, caption
 
-                str(
-                    Path(image_dir) / row["image"]
-                )
-            )
+    def _tf_process(self, image_path, caption):
+        image, caption = tf.py_function(
+            self._process,
+            [image_path, caption],
+            [tf.float32, tf.int64],
+        )
 
-            captions.append(row["caption"])
+        image.set_shape((299, 299, 3))
+        caption.set_shape((25,))
 
-        return images, captions
-    
-    def create_dataset(
+        return image, caption
+
+    def build(
         self,
-        image_paths,
-        captions,
+        caption_file,
+        image_dir,
     ):
+        """
+        Returns:
+            tf.data.Dataset
+        """
+
+        dataframe = self._load_dataframe(caption_file)
+
+        captions = dataframe["caption"].tolist()
+
+        print("Adapting TextVectorization layer...")
+
+        self.vectorizer.adapt(captions)
+
+        print("Vocabulary Size:", len(self.vectorizer.vocabulary()))
+
+        image_paths, captions = self._prepare_lists(
+            dataframe,
+            image_dir,
+        )
 
         dataset = tf.data.Dataset.from_tensor_slices(
             (
                 image_paths,
                 captions,
             )
+        )
+
+        dataset = dataset.map(
+            self._tf_process,
+            num_parallel_calls=tf.data.AUTOTUNE,
+        )
+
+        dataset = dataset.batch(
+            self.batch_size
+        )
+
+        dataset = dataset.prefetch(
+            tf.data.AUTOTUNE
         )
 
         return dataset

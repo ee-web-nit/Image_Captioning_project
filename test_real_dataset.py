@@ -10,7 +10,4 @@ dataset = builder.build(
 for images, captions in dataset.take(1):
 
     print(images.shape)
-
     print(captions.shape)
-
-    print(captions[0])
