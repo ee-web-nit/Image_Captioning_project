@@ -104,7 +104,7 @@ model:
   vocab_size: 10000
   sequence_length: 25
   batch_size: 64
-  epochs: 30
+  epochs: 1
 
 training:
 
