@@ -232,7 +232,8 @@ logs/
 artifacts/data_ingestion/raw/
 artifacts/data_ingestion/extracted/
 artifacts/data_ingestion/processed/
-
+artifacts/tensorboard/train/
+artifacts/history/
 # Trained Models
 artifacts/model_trainer/
 
