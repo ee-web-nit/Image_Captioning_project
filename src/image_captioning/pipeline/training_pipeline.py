@@ -8,6 +8,7 @@ class TrainingPipeline:
     def run(self):
 
         config = ConfigurationManager()
+
         trainer = ModelTrainer(
 
             training_config=config.get_training_config(),
@@ -22,11 +23,17 @@ class TrainingPipeline:
         )
 
         trainer.load_tokenizer()
-        trainer.load_dataset()
+
         trainer.build_model()
+
         trainer.compile_model()
+
+        trainer.load_dataset()
+
         trainer.create_callbacks()
+
         trainer.train()
+
         trainer.save_model()
 
         logger.info("Training pipeline completed.")

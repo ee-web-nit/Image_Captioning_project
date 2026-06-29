@@ -47,6 +47,8 @@ class ModelTrainer:
 
         self.callbacks = None
 
+        self.history = None
+
     def load_tokenizer(self):
         try:
             tokenizer_builder = TokenizerBuilder(
@@ -78,6 +80,13 @@ class ModelTrainer:
                 caption_file=self.splitter_config.validation_output,
                 image_dir=self.data_config.images_dir,
             )
+            logger.info(
+                f"Training batches: {len(self.train_dataset)}"
+            )
+
+            logger.info(
+                f"Validation batches: {len(self.validation_dataset)}"
+            )
 
             logger.info("Training and validation datasets created.")
         except Exception as e:
@@ -85,57 +94,58 @@ class ModelTrainer:
             raise CustomException(e, sys)
 
     def build_model(self):
+        try:
 
-        self.model = ImageCaptioningModel(
-            self.model_config
-        )
 
-        dummy_images = tf.zeros(
-            (
-                1,
-                299,
-                299,
-                3,
-            )
-        )
-
-        dummy_caption = tf.zeros(
-            (
-                1,
-                self.model_config.sequence_length - 1,
-            ),
-            dtype=tf.int32,
-        )
-
-        _ = self.model(
-            (
-                dummy_images,
-                dummy_caption,
-            )
-        )
-
-        checkpoint = (
-            self.training_config.checkpoint_dir /
-            "best.weights.h5"
-        )
-
-        if checkpoint.exists():
-
-            print(
-                "Loading checkpoint..."
+            self.model = ImageCaptioningModel(
+                self.model_config
             )
 
-            self.model.load_weights(
-                checkpoint
+            dummy_images = tf.zeros(
+                (
+                    1,
+                    self.model_config.image_size,
+                    self.model_config.image_size,
+                    3,
+                )
             )
 
-            print(
-                "Checkpoint restored."
+            dummy_caption = tf.zeros(
+                (
+                    1,
+                    self.model_config.sequence_length - 1,
+                ),
+                dtype=tf.int32,
             )
 
-        logger.info(
-            "Model initialized."
-        )
+            _ = self.model(
+                (
+                    dummy_images,
+                    dummy_caption,
+                )
+            )
+
+            checkpoint = (
+                self.training_config.checkpoint_dir /
+                "best.weights.h5"
+            )
+
+            if checkpoint.is_file():
+
+                logger.info("Loading checkpoint...")
+
+                self.model.load_weights(
+                    checkpoint
+                )
+
+                logger.info("Checkpoint restored.")
+
+            logger.info(
+                "Model initialized."
+            )
+        except Exception as e:
+
+            raise CustomException(e, sys)
 
     def compile_model(self):
         try:
@@ -158,7 +168,7 @@ class ModelTrainer:
                 loss_fn=loss_fn,
             )
 
-            logger.info("Model initialized.")
+            logger.info("Model compiled.")
         except Exception as e:
 
             raise CustomException(e, sys)
@@ -234,6 +244,8 @@ class ModelTrainer:
                 self.training_config.history_dir /
                 "training.csv",
 
+                separator=",",
+
                 append=True,
             ),
 
@@ -245,6 +257,9 @@ class ModelTrainer:
 
     def train(self):
         try:
+            logger.info(
+                "Starting model training..."
+            )
             self.history = self.model.fit(
 
                 self.train_dataset,
@@ -255,7 +270,10 @@ class ModelTrainer:
 
                 callbacks=self.callbacks,
 
-                initial_epoch=0,
+                initial_epoch=self.get_initial_epoch(),
+            )
+            logger.info(
+                "Training completed successfully."
             )
             history_file = (
                 self.training_config.history_dir /
@@ -292,3 +310,33 @@ class ModelTrainer:
 
             f"Weights saved to {save_path}"
         )
+    def get_initial_epoch(self):
+
+        history_file = (
+            self.training_config.history_dir /
+            "training.csv"
+        )
+
+        if not history_file.exists():
+            return 0
+
+        try:
+
+            import pandas as pd
+
+            history = pd.read_csv(history_file)
+
+            if len(history) == 0:
+                return 0
+
+            last_epoch = int(history.iloc[-1]["epoch"])
+
+            logger.info(
+                f"Resuming from epoch {last_epoch + 1}"
+            )
+
+            return last_epoch + 1
+
+        except Exception:
+
+            return 0
