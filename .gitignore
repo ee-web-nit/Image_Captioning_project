@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
 *.py[codz]
+*.pyo
 *$py.class
 
 # C extensions
@@ -232,7 +234,9 @@ logs/
 artifacts/data_ingestion/raw/
 artifacts/data_ingestion/extracted/
 artifacts/data_ingestion/processed/
-artifacts/tensorboard/train/
+artifacts/tensorboard/
+artifacts/model/
+artifacts/checkpoints/
 artifacts/history/
 # Trained Models
 artifacts/model_trainer/
