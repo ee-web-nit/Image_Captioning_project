@@ -86,18 +86,56 @@ class ModelTrainer:
 
     def build_model(self):
 
-        try:
+        self.model = ImageCaptioningModel(
+            self.model_config
+        )
 
+        dummy_images = tf.zeros(
+            (
+                1,
+                299,
+                299,
+                3,
+            )
+        )
 
-            self.model = ImageCaptioningModel(
-                self.model_config
+        dummy_caption = tf.zeros(
+            (
+                1,
+                self.model_config.sequence_length - 1,
+            ),
+            dtype=tf.int32,
+        )
+
+        _ = self.model(
+            (
+                dummy_images,
+                dummy_caption,
+            )
+        )
+
+        checkpoint = (
+            self.training_config.checkpoint_dir /
+            "best.weights.h5"
+        )
+
+        if checkpoint.exists():
+
+            print(
+                "Loading checkpoint..."
             )
 
-            logger.info("Model initialized.")
+            self.model.load_weights(
+                checkpoint
+            )
 
-        except Exception as e:
+            print(
+                "Checkpoint restored."
+            )
 
-            raise CustomException(e, sys)
+        logger.info(
+            "Model initialized."
+        )
 
     def compile_model(self):
         try:
@@ -126,76 +164,87 @@ class ModelTrainer:
             raise CustomException(e, sys)
         
     def create_callbacks(self):
-        try:
-            Path(self.training_config.checkpoint_dir).mkdir(
-                parents=True,
-                exist_ok=True,
-            )
 
-            Path(self.training_config.model_dir).mkdir(
-                parents=True,
-                exist_ok=True,
-            )
+        Path(self.training_config.checkpoint_dir).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
-            Path(self.training_config.history_dir).mkdir(
-                parents=True,
-                exist_ok=True,
-            )
+        Path(self.training_config.history_dir).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
-            Path(self.training_config.tensorboard_dir).mkdir(
-                parents=True,
-                exist_ok=True,
-            )
+        Path(self.training_config.tensorboard_dir).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
-            self.callbacks = [
+        Path(self.training_config.model_dir).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
-                #tf.keras.callbacks.ModelCheckpoint(
+        checkpoint_path = (
+            self.training_config.checkpoint_dir /
+            "best.weights.h5"
+        )
 
-                  #  filepath=self.training_config.checkpoint_dir /
-                    #"best_model.weights.h5",
+        self.callbacks = [
 
-                   # monitor="val_loss",
+            tf.keras.callbacks.ModelCheckpoint(
 
-                    #save_best_only=True,
+                filepath=checkpoint_path,
 
-                   # save_weights_only=True,
-               # ),
+                monitor="val_loss",
 
-                tf.keras.callbacks.EarlyStopping(
+                mode="min",
 
-                    monitor="val_loss",
+                save_best_only=True,
 
-                    patience=5,
+                save_weights_only=True,
 
-                    restore_best_weights=True,
-                ),
+                verbose=1,
+            ),
 
-                tf.keras.callbacks.ReduceLROnPlateau(
+            tf.keras.callbacks.EarlyStopping(
 
-                    monitor="val_loss",
+                monitor="val_loss",
 
-                    factor=0.2,
+                patience=5,
 
-                    patience=3,
-                ),
+                restore_best_weights=True,
 
-                tf.keras.callbacks.TensorBoard(
+                verbose=1,
+            ),
 
-                    log_dir=self.training_config.tensorboard_dir,
-                ),
+            tf.keras.callbacks.ReduceLROnPlateau(
 
-                tf.keras.callbacks.CSVLogger(
+                monitor="val_loss",
 
-                    self.training_config.history_dir / "training.csv",
-                ),
-            ]
-        except Exception as e:
+                factor=0.2,
 
-            raise CustomException(e, sys)
+                patience=3,
+
+                verbose=1,
+            ),
+
+            tf.keras.callbacks.CSVLogger(
+
+                self.training_config.history_dir /
+                "training.csv",
+
+                append=True,
+            ),
+
+            tf.keras.callbacks.TensorBoard(
+
+                log_dir=self.training_config.tensorboard_dir,
+            ),
+        ]
 
     def train(self):
         try:
-
             self.history = self.model.fit(
 
                 self.train_dataset,
@@ -205,8 +254,9 @@ class ModelTrainer:
                 epochs=self.training_config.epochs,
 
                 callbacks=self.callbacks,
-            )
 
+                initial_epoch=0,
+            )
             history_file = (
                 self.training_config.history_dir /
                 "history.json"
@@ -226,13 +276,19 @@ class ModelTrainer:
             raise CustomException(e, sys)
     
     def save_model(self):
-        try:
 
-            self.model.save_weights(
-                self.training_config.model_dir /
-                "final_model.weights.h5"
-            )
-            logger.info("Model saved successfully.")
-        except Exception as e:
+        save_path = (
 
-            raise CustomException(e, sys)
+            self.training_config.model_dir /
+
+            "final.weights.h5"
+        )
+
+        self.model.save_weights(
+            save_path
+        )
+
+        logger.info(
+
+            f"Weights saved to {save_path}"
+        )
