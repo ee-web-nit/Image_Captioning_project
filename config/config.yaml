@@ -104,7 +104,7 @@ model:
   vocab_size: 10000
   sequence_length: 25
   batch_size: 64
-  epochs: 1
+  epochs: 30
 
 training:
 
@@ -112,7 +112,7 @@ training:
 
   local:
     epochs: 1
-    batch_size: 16
+    batch_size: 64
     shuffle_buffer: 1000
 
   cloud:
