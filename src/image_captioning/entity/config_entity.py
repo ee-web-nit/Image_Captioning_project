@@ -90,3 +90,15 @@ class TokenizerBuilderConfig:
     max_tokens: int
 
     sequence_length: int
+
+
+@dataclass(frozen=True)
+class ModelConfig:
+    image_size: int
+    embed_dim: int
+    ff_dim: int
+    num_heads: int
+    vocab_size: int
+    sequence_length: int
+    batch_size: int
+    epochs: int

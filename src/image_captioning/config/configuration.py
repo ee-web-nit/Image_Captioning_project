@@ -11,6 +11,7 @@ from image_captioning.entity.config_entity import (
     DatasetSplitterConfig,
     VocabularyBuilderConfig,
     TokenizerBuilderConfig,
+    ModelConfig,
 )
 
 from image_captioning.utils.common import (
@@ -141,3 +142,19 @@ class ConfigurationManager:
             max_tokens=config.max_tokens,
             sequence_length=config.sequence_length,
         )
+    def get_model_config(self) -> ModelConfig:
+
+        config = self.config.model
+
+        model_config = ModelConfig(
+            image_size=config.image_size,
+            embed_dim=config.embed_dim,
+            ff_dim=config.ff_dim,
+            num_heads=config.num_heads,
+            vocab_size=config.vocab_size,
+            sequence_length=config.sequence_length,
+            batch_size=config.batch_size,
+            epochs=config.epochs,
+        )
+
+        return model_config

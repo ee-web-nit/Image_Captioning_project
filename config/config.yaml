@@ -95,3 +95,13 @@ tokenizer_builder:
   max_tokens: 10000
 
   sequence_length: 40
+
+model:
+  image_size: 299
+  embed_dim: 512
+  ff_dim: 512
+  num_heads: 2
+  vocab_size: 10000
+  sequence_length: 25
+  batch_size: 64
+  epochs: 30
