@@ -1,6 +1,10 @@
+tensorflow==2.19.0
 numpy
-pandas 
+pandas
 matplotlib
 PyYAML
 python-box
-tensorflow==2.19.0
+tqdm
+Pillow
+Flask
+gunicorn
