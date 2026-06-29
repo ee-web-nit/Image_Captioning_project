@@ -3,8 +3,9 @@ from pathlib import Path
 import pandas as pd
 import tensorflow as tf
 
-from image_captioning.components.text_vectorizer import TextVectorizer
 from image_captioning.utils.image_preprocessor import ImagePreprocessor
+
+
 
 
 class DatasetBuilder:
@@ -14,18 +15,15 @@ class DatasetBuilder:
 
     def __init__(
         self,
+        vectorizer,
         batch_size=64,
-        sequence_length=25,
-        vocab_size=10000,
     ):
+
         self.batch_size = batch_size
 
         self.preprocessor = ImagePreprocessor()
 
-        self.vectorizer = TextVectorizer(
-            max_tokens=vocab_size,
-            sequence_length=sequence_length,
-        )
+        self.vectorizer = vectorizer
 
     def _load_dataframe(self, caption_file):
         return pd.read_csv(caption_file)
@@ -57,7 +55,10 @@ class DatasetBuilder:
 
         image = self.preprocessor.preprocess(image_path)
 
-        caption = self.vectorizer.vectorize([caption])[0]
+        caption = tf.cast(
+            self.vectorizer.vectorize([caption])[0],
+            tf.int32,
+        )
 
         return image, caption
 
@@ -65,7 +66,7 @@ class DatasetBuilder:
         image, caption = tf.py_function(
             self._process,
             [image_path, caption],
-            [tf.float32, tf.int64],
+            [tf.float32, tf.int32],
         )
 
         image.set_shape((299, 299, 3))
@@ -85,13 +86,6 @@ class DatasetBuilder:
 
         dataframe = self._load_dataframe(caption_file)
 
-        captions = dataframe["caption"].tolist()
-
-        print("Adapting TextVectorization layer...")
-
-        self.vectorizer.adapt(captions)
-
-        print("Vocabulary Size:", len(self.vectorizer.vocabulary()))
 
         image_paths, captions = self._prepare_lists(
             dataframe,

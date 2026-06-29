@@ -1,5 +1,3 @@
-from image_captioning.utils.common import read_yaml
+from pathlib import Path
 
-config = read_yaml("config/config.yaml")
-
-print(config.artifacts_root)
+print(Path("artifacts/data_ingestion/extracted").iterdir())

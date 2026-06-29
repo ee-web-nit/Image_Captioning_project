@@ -22,9 +22,3 @@ class TrainingConfig:
     tensorboard_dir: Path
 
     history_dir: Path
-
-    tokenizer_path: Path
-
-    train_dataset_path: Path
-
-    validation_dataset_path: Path

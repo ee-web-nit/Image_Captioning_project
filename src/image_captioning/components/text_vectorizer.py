@@ -33,7 +33,12 @@ class TextVectorizer:
     def load_vocabulary(self, filepath):
 
         with open(filepath, "r", encoding="utf-8") as f:
-
-            vocab = [line.strip() for line in f]
+            vocab = [
+                line.strip()
+                for line in f
+                if line.strip()
+            ]
 
         self.vectorizer.set_vocabulary(vocab)
+
+        return len(vocab)

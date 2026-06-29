@@ -1,21 +1,41 @@
-import pickle
+
 import tensorflow as tf
 from image_captioning.components.dataset_builder import DatasetBuilder
 from image_captioning.models.image_captioning_model import ImageCaptioningModel
+from image_captioning.components.tokenizer_builder import TokenizerBuilder
+from image_captioning.logger import logger
+from pathlib import Path
+import json
+import sys
+from image_captioning.exception import CustomException
 
 
-def load_tokenizer(self):
-
-    with open(self.config.tokenizer_path, "rb") as f:
-
-        self.tokenizer = pickle.load(f)
-
-    print("Tokenizer loaded.")
 class ModelTrainer:
 
-    def __init__(self, config):
+    def __init__(
 
-        self.config = config
+        self,
+
+        training_config,
+
+        model_config,
+
+        tokenizer_config,
+
+        splitter_config,
+
+        data_config,
+    ):
+
+        self.training_config = training_config
+
+        self.model_config = model_config
+
+        self.tokenizer_config = tokenizer_config
+
+        self.splitter_config = splitter_config
+
+        self.data_config = data_config
 
         self.model = None
 
@@ -27,119 +47,190 @@ class ModelTrainer:
 
         self.callbacks = None
 
-
     def load_tokenizer(self):
+        try:
+            tokenizer_builder = TokenizerBuilder(
+                self.tokenizer_config
+            )
 
-        with open(self.config.tokenizer_path, "rb") as f:
+            self.tokenizer = tokenizer_builder.build_tokenizer()
 
-            self.tokenizer = pickle.load(f)
+            logger.info("Tokenizer loaded successfully.")
 
-        print("Tokenizer loaded.")
+        except Exception as e:
+
+            raise CustomException(e, sys)
 
     def load_dataset(self):
+        try:
 
-        dataset_builder = DatasetBuilder(self.config)
+            dataset_builder = DatasetBuilder(
+                vectorizer=self.tokenizer,
+                batch_size=self.training_config.batch_size,
+            )
 
-        self.train_dataset = dataset_builder.get_train_dataset()
+            self.train_dataset = dataset_builder.build(
+                caption_file=self.splitter_config.train_output,
+                image_dir=self.data_config.images_dir,
+            )
 
-        self.validation_dataset = dataset_builder.get_validation_dataset()
+            self.validation_dataset = dataset_builder.build(
+                caption_file=self.splitter_config.validation_output,
+                image_dir=self.data_config.images_dir,
+            )
 
-        print("Datasets loaded.")
+            logger.info("Training and validation datasets created.")
+        except Exception as e:
+
+            raise CustomException(e, sys)
 
     def build_model(self):
 
-        self.model = ImageCaptioningModel(
+        try:
 
-            self.config
-        )
 
-        print("Model initialized.")
+            self.model = ImageCaptioningModel(
+                self.model_config
+            )
+
+            logger.info("Model initialized.")
+
+        except Exception as e:
+
+            raise CustomException(e, sys)
 
     def compile_model(self):
+        try:
 
-        optimizer = tf.keras.optimizers.Adam(
 
-            learning_rate=self.config.learning_rate
-        )
+            optimizer = tf.keras.optimizers.Adam(
 
-        loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(
+                learning_rate=self.training_config.learning_rate
+            )
 
-            from_logits=False,
+            loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(
 
-            reduction="none",
-        )
+                from_logits=False,
 
-        self.model.compile(
+                reduction="none",
+            )
 
-            optimizer=optimizer,
+            self.model.compile(
+                optimizer=optimizer,
+                loss_fn=loss_fn,
+            )
 
-            loss=loss_fn,
-        )
+            logger.info("Model initialized.")
+        except Exception as e:
 
-        print("Model compiled.")
-
+            raise CustomException(e, sys)
+        
     def create_callbacks(self):
+        try:
+            Path(self.training_config.checkpoint_dir).mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
-        self.callbacks = [
+            Path(self.training_config.model_dir).mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
-            tf.keras.callbacks.ModelCheckpoint(
+            Path(self.training_config.history_dir).mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
-                filepath=self.config.checkpoint_dir / "best_model.keras",
+            Path(self.training_config.tensorboard_dir).mkdir(
+                parents=True,
+                exist_ok=True,
+            )
 
-                monitor="val_loss",
+            self.callbacks = [
 
-                save_best_only=True,
-            ),
+                tf.keras.callbacks.ModelCheckpoint(
 
-            tf.keras.callbacks.EarlyStopping(
+                    filepath=self.training_config.checkpoint_dir / "best_model.keras",
 
-                monitor="val_loss",
+                    monitor="val_loss",
 
-                patience=5,
+                    save_best_only=True,
+                ),
 
-                restore_best_weights=True,
-            ),
+                tf.keras.callbacks.EarlyStopping(
 
-            tf.keras.callbacks.ReduceLROnPlateau(
+                    monitor="val_loss",
 
-                monitor="val_loss",
+                    patience=5,
 
-                factor=0.2,
+                    restore_best_weights=True,
+                ),
 
-                patience=3,
-            ),
+                tf.keras.callbacks.ReduceLROnPlateau(
 
-            tf.keras.callbacks.TensorBoard(
+                    monitor="val_loss",
 
-                log_dir=self.config.tensorboard_dir,
-            ),
+                    factor=0.2,
 
-            tf.keras.callbacks.CSVLogger(
+                    patience=3,
+                ),
 
-                self.config.history_dir / "training.csv",
-            ),
-        ]
+                tf.keras.callbacks.TensorBoard(
+
+                    log_dir=self.training_config.tensorboard_dir,
+                ),
+
+                tf.keras.callbacks.CSVLogger(
+
+                    self.training_config.history_dir / "training.csv",
+                ),
+            ]
+        except Exception as e:
+
+            raise CustomException(e, sys)
 
     def train(self):
+        try:
 
-        history = self.model.fit(
+            self.history = self.model.fit(
 
-            self.train_dataset,
+                self.train_dataset,
 
-            validation_data=self.validation_dataset,
+                validation_data=self.validation_dataset,
 
-            epochs=self.config.epochs,
+                epochs=self.training_config.epochs,
 
-            callbacks=self.callbacks,
-        )
+                callbacks=self.callbacks,
+            )
 
-        return history
+            history_file = (
+                self.training_config.history_dir /
+                "history.json"
+            )
+
+            with open(history_file, "w") as f:
+                json.dump(self.history.history, f)
+
+            logger.info(
+                "Training history saved."
+            )
+
+            return self.history
+        
+        except Exception as e:
+
+            raise CustomException(e, sys)
     
     def save_model(self):
+        try:
 
-        self.model.save(
+            self.model.save(
 
-            self.config.model_dir / "image_captioning_model.keras"
-        )
+                self.training_config.model_dir /
+                "final_model.keras"
+            )
+            logger.info("Model saved successfully.")
+        except Exception as e:
 
-        print("Model saved successfully.")
+            raise CustomException(e, sys)

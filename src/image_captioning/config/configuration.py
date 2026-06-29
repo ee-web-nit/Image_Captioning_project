@@ -161,40 +161,36 @@ class ConfigurationManager:
 
         return model_config
     
-def get_training_config(self):
+    def get_training_config(self):
 
-    cfg = self.config.training
+        cfg = self.config.training
 
-    mode = cfg.mode
+        mode = cfg.mode
 
-    if mode == "local":
-        run_cfg = cfg.local
-    else:
-        run_cfg = cfg.cloud
+        if mode == "local":
+            run_cfg = cfg.local
+        else:
+            run_cfg = cfg.cloud
 
-    return TrainingConfig(
+        return TrainingConfig(
 
-        mode=mode,
+            mode=mode,
 
-        epochs=run_cfg.epochs,
+            epochs=run_cfg.epochs,
 
-        batch_size=run_cfg.batch_size,
+            batch_size=run_cfg.batch_size,
 
-        shuffle_buffer=run_cfg.shuffle_buffer,
+            shuffle_buffer=run_cfg.shuffle_buffer,
 
-        learning_rate=cfg.learning_rate,
+            learning_rate=cfg.learning_rate,
 
-        checkpoint_dir=Path(cfg.checkpoint_dir),
+            checkpoint_dir=Path(cfg.checkpoint_dir),
 
-        model_dir=Path(cfg.model_dir),
+            model_dir=Path(cfg.model_dir),
 
-        tensorboard_dir=Path(cfg.tensorboard_dir),
+            tensorboard_dir=Path(cfg.tensorboard_dir),
 
-        history_dir=Path(cfg.history_dir),
+            history_dir=Path(cfg.history_dir),
 
-        tokenizer_path=Path(self.config.paths.tokenizer),
 
-        train_dataset_path=Path(self.config.paths.train_dataset),
-
-        validation_dataset_path=Path(self.config.paths.validation_dataset),
-    )
+        )

@@ -94,7 +94,7 @@ tokenizer_builder:
 
   max_tokens: 10000
 
-  sequence_length: 40
+  sequence_length: 25
 
 model:
   image_size: 299

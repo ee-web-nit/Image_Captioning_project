@@ -109,15 +109,7 @@ class ImageCaptioningModel(Model):
 
         batch_img, batch_seq = batch_data
 
-        img_embed = self.cnn_model(
-            batch_img,
-            training=False,
-        )
-
-        encoder_out = self.encoder(
-            img_embed,
-            training=True,
-        )
+  
 
         batch_seq_inp = batch_seq[:, :-1]
 

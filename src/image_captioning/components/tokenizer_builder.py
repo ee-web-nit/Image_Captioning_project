@@ -1,33 +1,31 @@
-import sys
-import tensorflow as tf
-import pandas as pd
-
+from image_captioning.components.text_vectorizer import TextVectorizer
 from image_captioning.logger import logger
-from image_captioning.exception import CustomException
-from image_captioning.entity.config_entity import TokenizerBuilderConfig
 
 
 class TokenizerBuilder:
 
-    def __init__(self, config: TokenizerBuilderConfig):
+    def __init__(self, config):
         self.config = config
 
     def build_tokenizer(self):
 
-        logger.info("Building tokenizer...")
+        logger.info("Loading tokenizer...")
 
-        df = pd.read_csv(self.config.input_file)
+        print("=" * 60)
+        print("Tokenizer sequence length:", self.config.sequence_length)
+        print("=" * 60)
 
-        captions = df["caption"].tolist()
-
-        vectorizer = tf.keras.layers.TextVectorization(
+        vectorizer = TextVectorizer(
             max_tokens=self.config.max_tokens,
-            output_mode="int",
-            output_sequence_length=self.config.sequence_length,
+            sequence_length=self.config.sequence_length,
         )
 
-        vectorizer.adapt(captions)
+        vocab_size = vectorizer.load_vocabulary(
+            self.config.vocabulary_file
+        )
 
-        logger.info("Tokenizer built successfully.")
+        logger.info(
+            f"Tokenizer initialized with {vocab_size} tokens."
+        )
 
         return vectorizer

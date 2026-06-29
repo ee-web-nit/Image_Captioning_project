@@ -114,7 +114,7 @@ class DatasetBuilder:
         caption = self.vectorizer.vectorize(
             [caption]
         )[0]
-
+        tf.print("Caption shape:", tf.shape(caption))
         return image, caption
 
     def _tf_process(

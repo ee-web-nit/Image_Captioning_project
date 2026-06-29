@@ -39,9 +39,8 @@ class VocabularyBuilder:
                 encoding="utf-8"
             ) as file:
 
-                for word, count in vocabulary:
-
-                    file.write(f"{word}\t{count}\n")
+                for word, _ in vocabulary:
+                    file.write(f"{word}\n")
 
             logger.info(
                 f"Vocabulary created with {len(vocabulary)} words."
