@@ -149,17 +149,17 @@ class ModelTrainer:
 
             self.callbacks = [
 
-                tf.keras.callbacks.ModelCheckpoint(
+                #tf.keras.callbacks.ModelCheckpoint(
 
-                    filepath=self.training_config.checkpoint_dir /
-                    "best_model.weights.h5",
+                  #  filepath=self.training_config.checkpoint_dir /
+                    #"best_model.weights.h5",
 
-                    monitor="val_loss",
+                   # monitor="val_loss",
 
-                    save_best_only=True,
+                    #save_best_only=True,
 
-                    save_weights_only=True,
-                ),
+                   # save_weights_only=True,
+               # ),
 
                 tf.keras.callbacks.EarlyStopping(
 

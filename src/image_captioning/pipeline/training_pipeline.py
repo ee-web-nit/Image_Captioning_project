@@ -27,6 +27,6 @@ class TrainingPipeline:
         trainer.compile_model()
         trainer.create_callbacks()
         trainer.train()
-        trainer.save_model()
+       # trainer.save_model()
 
         logger.info("Training pipeline completed.")
