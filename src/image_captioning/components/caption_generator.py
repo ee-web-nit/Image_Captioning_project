@@ -65,16 +65,11 @@ class CaptionGenerator:
                 axis=-1,
             ).numpy())
 
-            print(
-                "Step:", len(caption),
-                "Token:", next_token,
-                "Word:", self.index_to_word.get(next_token)
-)
+
             next_word = self.index_to_word.get(
                 next_token,
                 "[UNK]",
             )
-            print("Vocabulary Size:", len(self.vocabulary))
 
             if next_word == "<end>":
                 break
