@@ -46,25 +46,35 @@ class CaptionGenerator:
 
             sequence = tf.keras.preprocessing.sequence.pad_sequences(
                 [sequence],
-                maxlen=self.max_length,
+                maxlen=self.max_length - 1,  
                 padding="post",
+            )
+            mask = tf.math.not_equal(
+                sequence,
+                0,
             )
 
             predictions = self.model.decoder(
                 sequence,
                 image_features,
                 training=False,
+                mask=mask,
             )
-
-            next_token = tf.argmax(
+            next_token = int(tf.argmax(
                 predictions[0, len(caption) - 1],
                 axis=-1,
-            ).numpy()
+            ).numpy())
 
+            print(
+                "Step:", len(caption),
+                "Token:", next_token,
+                "Word:", self.index_to_word.get(next_token)
+)
             next_word = self.index_to_word.get(
                 next_token,
                 "[UNK]",
             )
+            print("Vocabulary Size:", len(self.vocabulary))
 
             if next_word == "<end>":
                 break
