@@ -56,26 +56,21 @@ class CaptionGenerator:
                 training=False,
             )
 
-            predicted_index = tf.argmax(
-                predictions[0, len(caption) - 1]
+            next_token = tf.argmax(
+                predictions[0, len(caption) - 1],
+                axis=-1,
             ).numpy()
 
-            predicted_word = self.index_to_word.get(
-                predicted_index,
-                "<unk>",
+            next_word = self.index_to_word.get(
+                next_token,
+                "[UNK]",
             )
 
-            if predicted_word == "<end>":
+            if next_word == "<end>":
                 break
 
             caption.append(
-                predicted_word
+                next_word
             )
 
-        logger.info(
-            "Caption generated successfully."
-        )
-
-        return " ".join(
-            caption[1:]
-        )
+        return " ".join(caption[1:])

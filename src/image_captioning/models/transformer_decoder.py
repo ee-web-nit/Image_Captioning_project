@@ -47,10 +47,21 @@ class TransformerDecoder(layers.Layer):
         inputs = self.embedding(inputs)
         causal_mask = self.get_causal_attention_mask(inputs)
 
+        combined_mask = causal_mask
+        padding_mask = None
+
         if mask is not None:
             padding_mask = tf.cast(mask[:, :, tf.newaxis], dtype=tf.int32)
-            combined_mask = tf.cast(mask[:, tf.newaxis, :], dtype=tf.int32)
-            combined_mask = tf.minimum(combined_mask, causal_mask)
+
+            combined_mask = tf.cast(
+                mask[:, tf.newaxis, :],
+                dtype=tf.int32,
+            )
+
+            combined_mask = tf.minimum(
+                combined_mask,
+                causal_mask,
+            )
 
         attention_output_1 = self.attention_1(
             query=inputs,
