@@ -28,7 +28,7 @@ class Predictor:
     ):
 
         image = ImagePreprocessor.preprocess(
-            image_path
+            str(image_path)
         )
 
         image = tf.expand_dims(
