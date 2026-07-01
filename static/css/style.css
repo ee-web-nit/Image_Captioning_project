@@ -29,3 +29,35 @@ img{
     font-size:1.1rem;
 
 }
+
+.drop-zone{
+
+    border:3px dashed #0d6efd;
+
+    border-radius:15px;
+
+    padding:50px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    background:white;
+
+    transition:.3s;
+
+}
+
+.drop-zone:hover{
+
+    background:#eef5ff;
+
+}
+
+.dragover{
+
+    background:#dbeafe;
+
+    border-color:#0a58ca;
+
+}
