@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from werkzeug.utils import secure_filename
+import os
 
 from image_captioning.pipeline.prediction_pipeline import PredictionPipeline
 
@@ -28,9 +30,18 @@ def predict():
 
     file = request.files["image"]
 
-    image_path = (
-        "static/uploads/" +
-        file.filename
+    filename = secure_filename(file.filename)
+
+    upload_folder = "static/uploads"
+
+    os.makedirs(
+        upload_folder,
+        exist_ok=True,
+    )
+
+    image_path = os.path.join(
+        upload_folder,
+        filename,
     )
 
     file.save(image_path)
