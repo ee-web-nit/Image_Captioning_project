@@ -1,0 +1,14 @@
+
+services:
+
+  image-captioning:
+
+    build: .
+
+    container_name: image-captioning-app
+
+    ports:
+
+      - "5000:5000"
+
+    restart: unless-stopped

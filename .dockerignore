@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+
+.git/
+.gitignore
+
+artifacts/tensorboard/
+artifacts/history/
+
+*.ipynb
+
+.env
+
+.vscode/
+
+.idea/
