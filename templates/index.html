@@ -1,53 +1,87 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <title>Image Captioning</title>
+<div class="row justify-content-center">
 
-</head>
+    <div class="col-lg-8">
 
-<body>
+        <div class="card shadow-lg border-0 rounded-4">
 
-<h1>Image Captioning</h1>
+            <div class="card-body p-5">
 
-<form
-action="/predict"
-method="POST"
-enctype="multipart/form-data"
->
+                <h2 class="text-center mb-4">
 
-<input
-type="file"
-name="image"
-required
->
+                    Generate Image Captions
 
-<button>
+                </h2>
 
-Predict
+                <form
+                    action="/predict"
+                    method="POST"
+                    enctype="multipart/form-data">
 
-</button>
+                    <input
+                    id="imageInput"
+                    class="form-control mb-4"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    required>
+                    <div
+                    id="previewContainer"
+                    class="text-center mb-4"
+                    style="display:none;">
 
-</form>
+                        <img
 
-{% if image %}
+                        id="previewImage"
 
-<hr>
+                        class="img-fluid rounded shadow"
 
-<img
-src="{{ image }}"
-width="400"
->
+                        style="max-height:400px;">
 
-<h2>
+                    </div>
 
-{{ caption }}
+                    <div class="d-grid">
 
-</h2>
+                        <button
+                            class="btn btn-primary btn-lg">
 
-{% endif %}
+                            Generate Caption
 
-</body>
+                        </button>
 
-</html>
+                    </div>
+
+                </form>
+
+                {% if image %}
+
+                <hr>
+
+                <img
+                    src="{{ image }}"
+                    class="img-fluid rounded shadow">
+
+                <div class="alert alert-success mt-4">
+
+                    <strong>Caption</strong>
+
+                    <br><br>
+
+                    {{ caption }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

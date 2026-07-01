@@ -1,0 +1,31 @@
+body{
+
+    background:#f4f7fb;
+
+}
+
+.card{
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+img{
+
+    max-height:500px;
+
+    object-fit:contain;
+
+}
+
+.alert{
+
+    font-size:1.1rem;
+
+}
