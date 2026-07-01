@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Image Captioning</title>
+
+</head>
+
+<body>
+
+<h1>Image Captioning</h1>
+
+<form
+action="/predict"
+method="POST"
+enctype="multipart/form-data"
+>
+
+<input
+type="file"
+name="image"
+required
+>
+
+<button>
+
+Predict
+
+</button>
+
+</form>
+
+{% if image %}
+
+<hr>
+
+<img
+src="{{ image }}"
+width="400"
+>
+
+<h2>
+
+{{ caption }}
+
+</h2>
+
+{% endif %}
+
+</body>
+
+</html>
