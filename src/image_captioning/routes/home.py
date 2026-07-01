@@ -46,15 +46,13 @@ def predict():
 
     file.save(image_path)
 
-    caption = pipeline.predict(
+    caption, inference_time = pipeline.predict(
         image_path
     )
 
     return render_template(
-
         "index.html",
-
         image=image_path,
-
         caption=caption,
+        inference_time=inference_time,
     )

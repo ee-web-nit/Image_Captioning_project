@@ -1,4 +1,5 @@
 import tensorflow as tf
+import time
 
 from image_captioning.config.configuration import ConfigurationManager
 from image_captioning.components.tokenizer_builder import TokenizerBuilder
@@ -59,6 +60,15 @@ class PredictionPipeline:
         image_path,
     ):
 
-        return self.predictor.predict(
+        start_time = time.perf_counter()
+
+        caption = self.predictor.predict(
             image_path
         )
+
+        inference_time = round(
+            time.perf_counter() - start_time,
+            2,
+        )
+
+        return caption, inference_time
