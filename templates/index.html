@@ -15,6 +15,15 @@
                     Generate Image Captions
 
                 </h2>
+                {% if error %}
+
+                <div class="alert alert-danger">
+
+                    {{ error }}
+
+                </div>
+
+                {% endif %}
 
                 <form
                 id="uploadForm"
